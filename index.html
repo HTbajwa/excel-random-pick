@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Excel File in JS</title>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  </head>
+  <body
+    style="
+      background-color: rgb(141, 81, 81);
+      width: 100vw;
+      height: 100vh;
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+    "
+  >
+    <main>
+      <h2>Upload Excel File</h2>
+      <center>
+        <input type="file" id="input" accept=".xlsx, .xls" />
+
+        <p style="font-size: 44px;" id="output"></p>
+
+        <button id="winner">Winner 2 Employees</button>
+      </center>
+
+      <script>
+        const input = document.getElementById("input");
+        const output = document.getElementById("output");
+        const winner1 = document.getElementById("winner");
+
+        input.addEventListener("change", (e) => {
+          console.log(e);
+          const file = e.target.files[0];
+          const reader = new FileReader();
+
+          reader.onload = (e) => {
+            // e.preventDefault()
+            // console.log(new Uint8Array(e.target.result))
+            // const data = new Uint8Array(e.target.result);
+            const data = e.target.result;
+            //first Array buffer comes
+            console.log(e.target.result);
+
+            const workbook = XLSX.read(data, { type: "array" });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            console.log(sheet)
+            const json = XLSX.utils.sheet_to_json(sheet);
+
+            const jsondata = JSON.stringify(json, null, 2);
+            let Allemplyees = [];
+            
+            const employeename = json
+              .filter((element) => element.Years > 5)
+              .map((emp) => emp.Employee);
+
+  
+            if (employeename.length < 2) {
+              console.log("No employees available");
+              return;
+            }
+            const random = employeename
+              .sort(() => 0.5 - Math.random())
+              .slice(0, 2);
+            console.log(random);
+winner1.addEventListener("click",()=>{
+  output.textContent=`${random} `
+})
+           
+          };
+
+          reader.readAsArrayBuffer(file);
+        });
+      </script>
+    </main>
+  </body>
+</html>
